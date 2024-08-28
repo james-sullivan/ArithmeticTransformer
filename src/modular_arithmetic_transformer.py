@@ -4,9 +4,13 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
+from datetime import datetime, timedelta
 
 # Set up device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+else:
+    device = torch.device("cpu")
 print(f"Using device: {device}")
 
 class ModularArithmeticDataset(Dataset):
@@ -98,8 +102,8 @@ if __name__ == "__main__":
     max_seq_length = train_data['input'].str.len().max()
 
     # Create datasets and dataloaders
-    train_dataset = ModularArithmeticDataset(train_data, encoder)
-    test_dataset = ModularArithmeticDataset(test_data, encoder)
+    train_dataset = ModularArithmeticDataset(train_data, encoder, max_seq_length, padding_char)
+    test_dataset = ModularArithmeticDataset(test_data, encoder, max_seq_length, padding_char)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=32)
 
@@ -119,7 +123,8 @@ if __name__ == "__main__":
     optimizer = optim.Adam(model.parameters())
 
     # Training loop
-    num_epochs = 50
+    start_time = datetime.now()
+    num_epochs = 10
     for epoch in range(num_epochs):
         model.train()
         total_loss = 0
@@ -146,8 +151,10 @@ if __name__ == "__main__":
 
         accuracy = 100 * correct / total
         print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {total_loss / len(train_loader):.4f}, Accuracy: {accuracy:.2f}%")
-'''
-    # Test the model
+    end_time = datetime.now()
+    training_duration = end_time - start_time
+    print(f"Training duration: {training_duration.total_seconds()} seconds")
+
     model.eval()
     with torch.no_grad():
         for equation, result in test_loader:
@@ -155,6 +162,5 @@ if __name__ == "__main__":
             output = model(equation)
             _, predicted = torch.max(output, 1)
             for i in range(len(equation)):
-                eq_str = tokenizer.decode(equation[i].tolist())
+                eq_str = decoder(equation[i].tolist())
                 print(f"Equation: {eq_str}, Predicted: {predicted[i].item()}, Actual: {result[i].item()}")
-'''
