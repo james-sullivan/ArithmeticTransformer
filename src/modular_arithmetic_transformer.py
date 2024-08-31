@@ -108,10 +108,10 @@ if __name__ == "__main__":
     test_loader = DataLoader(test_dataset, batch_size=32)
 
     # Model parameters
-    d_model = 64
-    nhead = 1
+    d_model = 124
+    nhead = 2
     num_layers = 3
-    dim_feedforward = 256
+    dim_feedforward = 496
     max_result = train_data['output'].max() + 1  # +1 because we start counting from 0
 
     # Initialize the model
@@ -124,7 +124,7 @@ if __name__ == "__main__":
 
     # Training loop
     start_time = datetime.now()
-    num_epochs = 10
+    num_epochs = 25
     for epoch in range(num_epochs):
         model.train()
         total_loss = 0
@@ -157,10 +157,17 @@ if __name__ == "__main__":
 
     model.eval()
     with torch.no_grad():
+        test_samples = 10  # Number of samples to test
+        sample_count = 0
         for equation, result in test_loader:
             equation, result = equation.to(device), result.to(device)
             output = model(equation)
             _, predicted = torch.max(output, 1)
             for i in range(len(equation)):
+                if sample_count >= test_samples:
+                    break
                 eq_str = decoder(equation[i].tolist())
                 print(f"Equation: {eq_str}, Predicted: {predicted[i].item()}, Actual: {result[i].item()}")
+                sample_count += 1
+            if sample_count >= test_samples:
+                break

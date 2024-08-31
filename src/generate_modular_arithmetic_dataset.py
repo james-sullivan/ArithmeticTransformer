@@ -7,12 +7,43 @@ from sklearn.model_selection import train_test_split
 def generate_addition_problem(modulus, max_number):
     a = random.randint(0, max_number)
     b = random.randint(0, max_number)
-    result = (a + b) % modulus
+    c = random.randint(0, max_number)
+
+    '''
+    coinFlip = random.randint(1,2)
+    if coinFlip == 1:
+        result = (a * b) % modulus
+        input = f"( {a} * {b} ) % {modulus}"
+        operation = "multiplication"
+    else:
+        result = (a + b) % modulus
+        input = f"( {a} + {b} ) % {modulus}"
+        operation = "addition"
+    '''
+
+    randInt = random.randint(1, 4)
+    if randInt == 1:
+        result = (a * b * c) % modulus
+        input = f"({a} * {b} * {c}) % {modulus}"
+        operation = "multiplication"
+    elif randInt == 2:
+        result = (a + b + c) % modulus
+        input = f"({a} + {b} + {c}) % {modulus}"
+        operation = "addition"
+    elif randInt == 3:
+        result = (a * b + c) % modulus
+        input = f"({a} * {b} + {c}) % {modulus}"
+        operation = "additionAndMultiplication"
+    else:
+        result = (a + b * c) % modulus
+        input = f"({a} + {b} * {c}) % {modulus}"
+        operation = "additionAndMultiplication"
+
     return {
-        "input": f"( {a} + {b} ) % {modulus} =",
+        "input": input,
         "output": str(result),
         "modulus": modulus,
-        "operation": "addition"
+        "operation": operation
     }
 
 def generate_unique_dataset(num_problems, moduli_range, max_number):
@@ -32,12 +63,15 @@ test_size = 0.2
 moduli_range = (10, 10)
 max_number = 99
 random_state = 42  # For reproducibility
+data_set_name = "modular_arithmetic_three_numbers"
 
+'''
 available_unique_problems = (moduli_range[1] - moduli_range[0] + 1) * max_number * max_number
 
 # Make sure there are enough problems
 if 0.95 * available_unique_problems < total_problems:
     print(f"WARNING: With the given parameters, there might not be enough problems to create. available_unique_problems = {available_unique_problems}")
+'''
 
 # Generate a single unique dataset
 print(f"Generating {total_problems} unique problems...")
@@ -54,20 +88,15 @@ data_path = os.path.abspath(data_path)
 os.makedirs(data_path, exist_ok=True)
 
 # Save to CSV
-train_path = os.path.join(data_path, "modular_arithmetic_train.csv")
-test_path = os.path.join(data_path, "modular_arithmetic_test.csv")
+train_name = f"{data_set_name}_train.csv"
+test_name = f"{data_set_name}_test.csv"
+train_path = os.path.join(data_path, train_name)
+test_path = os.path.join(data_path, test_name)
 train_df.to_csv(train_path, index=False)
 test_df.to_csv(test_path, index=False)
 
-print(f"Training data ({len(train_df)} problems) saved to modular_arithmetic_train.csv")
-print(f"Test data ({len(test_df)} problems) saved to modular_arithmetic_test.csv")
-
-# Display some statistics
-print("\nTraining Data Statistics:")
-print(train_df['modulus'].describe())
-
-print("\nTest Data Statistics:")
-print(test_df['modulus'].describe())
+print(f"Training data ({len(train_df)} problems) saved to {train_name}")
+print(f"Test data ({len(test_df)} problems) saved to f{test_name}")
 
 # Verify no overlap (this should always be true, but it's good to check)
 train_inputs = set(train_df['input'])
