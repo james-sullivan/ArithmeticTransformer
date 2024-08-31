@@ -2,12 +2,13 @@ import os
 
 import pandas as pd
 import random
+import numpy as np
 from sklearn.model_selection import train_test_split
 
-def generate_addition_problem(modulus, max_number):
-    a = random.randint(0, max_number)
-    b = random.randint(0, max_number)
-    c = random.randint(0, max_number)
+def generate_addition_problem(modulus, max_number, rng):
+    a = rng.integers(0, max_number + 1)
+    b = rng.integers(0, max_number + 1)
+    c = rng.integers(0, max_number + 1)
 
     '''
     coinFlip = random.randint(1,2)
@@ -21,7 +22,7 @@ def generate_addition_problem(modulus, max_number):
         operation = "addition"
     '''
 
-    randInt = random.randint(1, 4)
+    randInt = rng.integers(1, 5)
     if randInt == 1:
         result = (a * b * c) % modulus
         input = f"({a} * {b} * {c}) % {modulus}"
@@ -33,11 +34,11 @@ def generate_addition_problem(modulus, max_number):
     elif randInt == 3:
         result = (a * b + c) % modulus
         input = f"({a} * {b} + {c}) % {modulus}"
-        operation = "additionAndMultiplication"
+        operation = "addAndMulti"
     else:
         result = (a + b * c) % modulus
         input = f"({a} + {b} * {c}) % {modulus}"
-        operation = "additionAndMultiplication"
+        operation = "addAndMulti"
 
     return {
         "input": input,
@@ -46,12 +47,12 @@ def generate_addition_problem(modulus, max_number):
         "operation": operation
     }
 
-def generate_unique_dataset(num_problems, moduli_range, max_number):
+def generate_unique_dataset(num_problems, moduli_range, max_number, rng):
     unique_problems = set()
     data = []
     while len(data) < num_problems:
         modulus = random.randint(moduli_range[0], moduli_range[1])
-        problem = generate_addition_problem(modulus, max_number)
+        problem = generate_addition_problem(modulus, max_number, rng)
         if problem['input'] not in unique_problems:
             unique_problems.add(problem['input'])
             data.append(problem)
@@ -63,6 +64,7 @@ test_size = 0.2
 moduli_range = (10, 10)
 max_number = 99
 random_state = 42  # For reproducibility
+rng = np.random.default_rng(random_state)
 data_set_name = "modular_arithmetic_three_numbers"
 
 '''
@@ -75,7 +77,7 @@ if 0.95 * available_unique_problems < total_problems:
 
 # Generate a single unique dataset
 print(f"Generating {total_problems} unique problems...")
-df = generate_unique_dataset(total_problems, moduli_range, max_number)
+df = generate_unique_dataset(total_problems, moduli_range, max_number, rng)
 print(f"Generated {len(df)} unique problems.")
 
 # Split the dataset into training and test sets
