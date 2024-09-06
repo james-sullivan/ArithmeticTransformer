@@ -10,19 +10,17 @@ def generate_addition_problem(modulus, max_number, rng):
     b = rng.integers(0, max_number + 1)
     c = rng.integers(0, max_number + 1)
 
-    '''
-    coinFlip = random.randint(1,2)
+    coinFlip = 2 # random.randint(1,2)
     if coinFlip == 1:
         result = (a * b) % modulus
         input = f"( {a} * {b} ) % {modulus}"
         operation = "multiplication"
     else:
         result = (a + b) % modulus
-        input = f"( {a} + {b} ) % {modulus}"
+        input = f"{a} {b} {modulus}"
         operation = "addition"
-    '''
 
-    randInt = rng.integers(1, 5)
+    '''randInt = rng.integers(1, 5)
     if randInt == 1:
         result = (a * b * c) % modulus
         input = f"({a} * {b} * {c}) % {modulus}"
@@ -38,7 +36,7 @@ def generate_addition_problem(modulus, max_number, rng):
     else:
         result = (a + b * c) % modulus
         input = f"({a} + {b} * {c}) % {modulus}"
-        operation = "addAndMulti"
+        operation = "addAndMulti"'''
 
     return {
         "input": input,
@@ -59,7 +57,7 @@ def generate_unique_dataset(num_problems, moduli_range, max_number, rng):
     return pd.DataFrame(data)
 
 # Configuration
-total_problems = 10000
+total_problems = 12000
 test_size = 0.2
 moduli_range = (10, 10)
 max_number = 99
