@@ -1,1 +1,4 @@
 .idea/
+.venv/
+saves/
+.DS_Store
