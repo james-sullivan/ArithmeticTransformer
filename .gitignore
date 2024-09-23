@@ -1,4 +1,6 @@
 .idea/
 .venv/
 saves/
-.DS_Store
+**/.DS_Store
+**/__pycache__/
+*.png

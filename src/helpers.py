@@ -1,5 +1,16 @@
 import torch
 from torch.utils.data import TensorDataset, DataLoader
+from collections import deque
+
+def rolling_average(values, window_size):
+    window = deque(maxlen=window_size)
+    averages = []
+    
+    for value in values:
+        window.append(value)
+        averages.append(sum(window) / len(window))
+    
+    return averages
 
 def get_dataloader(df, batch_size, shuffle):
     inputs = torch.tensor(df['input'].tolist())
